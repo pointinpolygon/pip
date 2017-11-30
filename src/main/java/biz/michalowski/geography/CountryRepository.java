@@ -1,6 +1,6 @@
-package biz.michalowski.geo;
+package biz.michalowski.geography;
 
-import biz.michalowski.geometry.BoundingBox;
+import biz.michalowski.geometry.Boundary;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
@@ -23,14 +23,14 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class CountryRepository {
+public class CountryRepository {
 
     private static final String COUNTRY_NAME_PROPERTY = "NAME";
 
     private final GeometryFactory geometryFactory;
     private final FeatureCollection countryCollection;
 
-    CountryRepository(File shpFile) {
+    public CountryRepository(File shpFile) {
         this.geometryFactory = JTSFactoryFinder.getGeometryFactory();
         this.countryCollection = initCollection(shpFile);
     }
@@ -80,12 +80,37 @@ class CountryRepository {
                 .map(name -> name.getValue().toString());
 
         Country.Borders borders = convertToBorders(multiPolygon);
-        BoundingBox boundingBox = convertToBoundingBox(bounds);
+        Boundary.BoundingBox boundingBox = convertToBoundingBox(bounds);
         return countryName.map(name -> new Country(name, borders, boundingBox));
     }
 
-    private BoundingBox convertToBoundingBox(org.opengis.geometry.BoundingBox bounds) {
-        return point -> bounds.contains(point.x, point.y);
+    private Boundary.BoundingBox convertToBoundingBox(org.opengis.geometry.BoundingBox bounds) {
+        return new Boundary.BoundingBox() {
+            @Override
+            public boolean contains(biz.michalowski.geometry.Point point) {
+                return bounds.contains(point.x, point.y);
+            }
+
+            @Override
+            public double left() {
+                return bounds.getMinX();
+            }
+
+            @Override
+            public double right() {
+                return bounds.getMaxX();
+            }
+
+            @Override
+            public double top() {
+                return bounds.getMinY();
+            }
+
+            @Override
+            public double bottom() {
+                return bounds.getMaxY();
+            }
+        };
     }
 
     private Country.Borders convertToBorders(MultiPolygon multiPolygon) {

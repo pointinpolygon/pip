@@ -1,8 +1,8 @@
 package biz.michalowski;
 
-import biz.michalowski.geo.Coordinate;
-import biz.michalowski.geometry.BoundingBox;
+import biz.michalowski.geography.Coordinate;
 import biz.michalowski.geometry.SimpleBoundingBox;
+import biz.michalowski.geometry.Boundary;
 
 public class TestValues {
 
@@ -19,6 +19,6 @@ public class TestValues {
     public static final Coordinate LIBEREC_COORDINATE = new Coordinate(LIBEREC_LAT, LIBEREC_LON);
     public static final Coordinate LA_COORDINATE = new Coordinate(LA_LAT, LA_LON);
 
-    public static final BoundingBox POLAND_BOUNDING_BOX = new SimpleBoundingBox(14.074521111719434, 24.029985792748903, 49.02739533140962, 54.85153595643291);
+    public static final Boundary.BoundingBox POLAND_BOUNDING_BOX = new SimpleBoundingBox(14.074521111719434, 24.029985792748903, 49.02739533140962, 54.85153595643291);
 
 }

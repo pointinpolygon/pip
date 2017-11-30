@@ -1,11 +1,9 @@
-package biz.michalowski.geo;
+package biz.michalowski.geography;
 
 import biz.michalowski.TestValues;
-import biz.michalowski.geo.Country;
-import biz.michalowski.geo.CountryRepository;
+import biz.michalowski.app.Resources;
 import org.junit.Test;
 
-import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +12,7 @@ import static org.junit.Assert.assertThat;
 
 public class CountryRepositoryTest {
 
-    private static final String COUNTRIES_SHP = "/countries/ne_110m_admin_0_countries.shp";
-
-    private final String file = getClass().getResource(COUNTRIES_SHP).getFile();
-    private final CountryRepository countryRepository = new CountryRepository(new File(file));
+    private final CountryRepository countryRepository = new CountryRepository(Resources.getCountriesFile());
 
     @Test
     public void wroclaw_is_in_Poland() {
@@ -39,10 +34,4 @@ public class CountryRepositoryTest {
 
         assertThat(countries.size(), is(177));
     }
-
-    //take the bounding box of each country
-    //construct a QuadTree
-    //max number of items 4?, max depth 10?
-    //retrieve all the possibly-colliding countries
-    //double check if colliding
 }

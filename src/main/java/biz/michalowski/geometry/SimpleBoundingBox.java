@@ -2,25 +2,45 @@ package biz.michalowski.geometry;
 
 import com.google.common.base.Preconditions;
 
-public class SimpleBoundingBox implements BoundingBox {
+public class SimpleBoundingBox implements Boundary.BoundingBox {
 
-    private final double x1;
-    private final double y1;
-    private final double x2;
-    private final double y2;
+    private final double left;
+    private final double top;
+    private final double right;
+    private final double bottom;
 
-    public SimpleBoundingBox(double x1, double y1, double x2, double y2) {
-        Preconditions.checkArgument(x1 <= x2);
-        Preconditions.checkArgument(y1 <= y2);
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
+    public SimpleBoundingBox(double left, double top, double right, double bottom) {
+        Preconditions.checkArgument(left <= right);
+        Preconditions.checkArgument(top <= bottom);
+        this.left = left;
+        this.top = top;
+        this.right = right;
+        this.bottom = bottom;
     }
 
     @Override
     public boolean contains(Point point) {
-        return this.x1 <= point.x && point.x <= this.x2
-                && this.y1 <= point.y && point.y <= this.y2;
+        return this.left <= point.x && point.x <= this.right
+                && this.top <= point.y && point.y <= this.bottom;
+    }
+
+    @Override
+    public double left() {
+        return left;
+    }
+
+    @Override
+    public double right() {
+        return right;
+    }
+
+    @Override
+    public double top() {
+        return top;
+    }
+
+    @Override
+    public double bottom() {
+        return bottom;
     }
 }

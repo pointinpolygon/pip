@@ -1,4 +1,4 @@
-package biz.michalowski.geo;
+package biz.michalowski.geography;
 
 import com.google.common.base.Preconditions;
 

@@ -1,8 +1,8 @@
-package biz.michalowski.geo;
+package biz.michalowski.geography;
 
-import biz.michalowski.geometry.BoundingBox;
+import biz.michalowski.geometry.Boundary;
 
-class Country {
+public class Country implements Boundary {
 
     interface Borders {
         boolean contains(Coordinate coordinate);
@@ -18,11 +18,12 @@ class Country {
         this.boundingBox = boundingBox;
     }
 
-    String getName() {
+    public String getName() {
         return name;
     }
 
-    BoundingBox getBoundingBox() {
+    @Override
+    public BoundingBox getBoundingBox() {
         return boundingBox;
     }
 

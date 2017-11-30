@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-public class BoundingBoxTest {
+public class SimpleBoundingBoxTest {
 
     private final SimpleBoundingBox boundingBox = new SimpleBoundingBox(1, 1, 20, 200);
 
