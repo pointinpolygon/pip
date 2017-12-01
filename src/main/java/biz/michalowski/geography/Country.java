@@ -4,17 +4,17 @@ import biz.michalowski.geometry.Boundary;
 
 public class Country implements Boundary {
 
-    interface Borders {
+    interface Border {
         boolean contains(Coordinate coordinate);
     }
 
     private final String name;
-    private final Borders borders;
+    private final Border border;
     private final BoundingBox boundingBox;
 
-    Country(String name, Borders borders, BoundingBox boundingBox) {
+    Country(String name, Border border, BoundingBox boundingBox) {
         this.name = name;
-        this.borders = borders;
+        this.border = border;
         this.boundingBox = boundingBox;
     }
 
@@ -28,7 +28,7 @@ public class Country implements Boundary {
     }
 
     boolean contains(Coordinate coordinate) {
-        return borders.contains(coordinate);
+        return border.contains(coordinate);
     }
 
     @Override

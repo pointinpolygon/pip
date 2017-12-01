@@ -2,7 +2,6 @@ package biz.michalowski.geometry.canvas;
 
 import biz.michalowski.geometry.Boundary;
 import biz.michalowski.geometry.Point;
-import biz.michalowski.geometry.SimpleBoundingBox;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -16,10 +15,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 public class CanvasTest {
 
 //    private final Canvas<String> canvas = new NaiveCanvas<>();
-    private final Canvas<Boundary> canvas = new BinsearchCanvas<>();
+//    private final Canvas<Boundary> canvas = new BinsearchCanvas<>();
+    private final Canvas<Boundary> canvas = Canvas.CanvasFactory.quadtree().get();
 
-    private final Boundary outerBox = boundary(0d, 0d, 100d, 100d);
-    private final Boundary innerBox = boundary(10d, 20d, 80d, 60d);
+    private final Boundary outerBox = TestBoundary.from(0d, 0d, 100d, 100d);
+    private final Boundary innerBox = TestBoundary.from(10d, 20d, 80d, 60d);
 
     @Test
     public void finds_BoundingBox_when_point_is_inside() {
@@ -51,7 +51,4 @@ public class CanvasTest {
         assertThat(matching, is(Arrays.asList(outerBox, innerBox)));
     }
 
-    private Boundary boundary(final double left, final double top, final double right, final double bottom) {
-        return () -> new SimpleBoundingBox(left, top, right, bottom);
-    }
 }

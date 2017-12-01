@@ -2,6 +2,7 @@ package biz.michalowski.geometry.canvas;
 
 import biz.michalowski.geometry.Boundary;
 import biz.michalowski.geometry.Point;
+import biz.michalowski.geometry.SimpleBoundingBox;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -21,6 +22,12 @@ public interface Canvas<T extends Boundary> {
 
         static <T extends Boundary> CanvasFactory<T> binsearch() {
             return BinsearchCanvas::new;
+        }
+
+        static <T extends Boundary> CanvasFactory<T> quadtree() {
+//            SimpleBoundingBox area = new SimpleBoundingBox(MIN_VALUE, MIN_VALUE, MAX_VALUE, MAX_VALUE);
+            SimpleBoundingBox area = new SimpleBoundingBox(-180, -90, 180, 90);
+            return () -> new QuadtreeCanvas<>(area, 10);
         }
     }
 

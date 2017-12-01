@@ -79,9 +79,9 @@ public class CountryRepository {
                 .findFirst()
                 .map(name -> name.getValue().toString());
 
-        Country.Borders borders = convertToBorders(multiPolygon);
+        Country.Border border = convertToBorders(multiPolygon);
         Boundary.BoundingBox boundingBox = convertToBoundingBox(bounds);
-        return countryName.map(name -> new Country(name, borders, boundingBox));
+        return countryName.map(name -> new Country(name, border, boundingBox));
     }
 
     private Boundary.BoundingBox convertToBoundingBox(org.opengis.geometry.BoundingBox bounds) {
@@ -113,7 +113,7 @@ public class CountryRepository {
         };
     }
 
-    private Country.Borders convertToBorders(MultiPolygon multiPolygon) {
+    private Country.Border convertToBorders(MultiPolygon multiPolygon) {
         return coordinate -> {
             Point geoToolsPoint = geometryFactory.createPoint(
                     new com.vividsolutions.jts.geom.Coordinate(coordinate.lon, coordinate.lat)

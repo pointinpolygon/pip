@@ -1,7 +1,5 @@
 package biz.michalowski.geometry;
 
-import biz.michalowski.geometry.Point;
-
 public interface Boundary {
 
     BoundingBox getBoundingBox();

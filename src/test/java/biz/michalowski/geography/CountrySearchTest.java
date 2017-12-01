@@ -18,21 +18,21 @@ import static org.mockito.Mockito.when;
 public class CountrySearchTest {
 
     private final CountryRepository countryRepository = mock(CountryRepository.class);
-    private final Country.Borders polishBorders = mock(Country.Borders.class);
-    private final Country poland = new Country("Poland", polishBorders, TestValues.POLAND_BOUNDING_BOX);
+    private final Country.Border polishBorder = mock(Country.Border.class);
+    private final Country poland = new Country("Poland", polishBorder, TestValues.POLAND_BOUNDING_BOX);
 
     private CountrySearch countrySearch;
 
     @Before
     public void setUp() throws Exception {
-        when(polishBorders.contains(any(Coordinate.class))).thenReturn(false);
+        when(polishBorder.contains(any(Coordinate.class))).thenReturn(false);
         when(countryRepository.getAll()).thenReturn(Collections.singletonList(poland));
-        countrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.getDefault());
+        countrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.quadtree());
     }
 
     @Test
     public void finds_a_country_by_coordinates_inside() {
-        when(polishBorders.contains(any(Coordinate.class))).thenReturn(true);
+        when(polishBorder.contains(any(Coordinate.class))).thenReturn(true);
         Optional<Country> country = countrySearch.findCountry(WROCLAW_COORDINATE);
 
         assertThat(country.get().getName(), is("Poland"));

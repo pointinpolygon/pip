@@ -18,28 +18,30 @@ public class CountrySearchBenchmark {
 
     private final CountryRepository countryRepository = new CountryRepository(Resources.getCountriesFile());
     private final CountrySearch naiveCountrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.naive());
-    private final CountrySearch smartCountrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.binsearch());
+    private final CountrySearch binsearchCountrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.binsearch());
+    private final CountrySearch quadtreeCountrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.quadtree());
     private final CoordinateGenerator coordinateGenerator = new CoordinateGenerator(new Random(0));
-
-    private Coordinate coordinate;
 
     @Benchmark
     public int measureNaive() {
         Coordinate randomCoordinate = coordinateGenerator.getRandom();
-        if (coordinate == null) {
-            System.out.println(randomCoordinate);
-            coordinate = randomCoordinate;
-        }
         return naiveCountrySearch.findCountry(randomCoordinate).map(f -> 1).orElse(0);
     }
 
     @Benchmark
-    public int measureSmart() {
+    public int measureBinsearch() {
         Coordinate randomCoordinate = coordinateGenerator.getRandom();
-        if (coordinate == null) {
+        return binsearchCountrySearch.findCountry(randomCoordinate).map(f -> 1).orElse(0);
+    }
+
+    @Benchmark
+    public int measureQuadtree() {
+        Coordinate randomCoordinate = coordinateGenerator.getRandom();
+        try {
+            return quadtreeCountrySearch.findCountry(randomCoordinate).map(f -> 1).orElse(0);
+        } catch (Exception e) {
             System.out.println(randomCoordinate);
-            coordinate = randomCoordinate;
         }
-        return smartCountrySearch.findCountry(randomCoordinate).map(f -> 1).orElse(0);
+        return 1;
     }
 }

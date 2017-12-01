@@ -2,6 +2,9 @@ package biz.michalowski.geometry;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class SimpleBoundingBox implements Boundary.BoundingBox {
 
     private final double left;
@@ -42,5 +45,28 @@ public class SimpleBoundingBox implements Boundary.BoundingBox {
     @Override
     public double bottom() {
         return bottom;
+    }
+
+    public List<SimpleBoundingBox> divide() {
+        double newWidth = (right - left) / 2;
+        double newHeight = (bottom - top) / 2;
+        return Arrays.asList(
+                new SimpleBoundingBox(left, top, left + newWidth, top + newHeight),
+                new SimpleBoundingBox(left + newWidth, top, right, top + newHeight),
+                new SimpleBoundingBox(left, top + newHeight, left + newWidth, bottom),
+                new SimpleBoundingBox(left + newWidth, top + newHeight, right, bottom)
+        );
+    }
+
+    public boolean containsFully(Boundary.BoundingBox boundingBox) {
+        return left < boundingBox.left()
+                && top < boundingBox.top()
+                && boundingBox.right() < right
+                && boundingBox.bottom() < bottom;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s %s", left, top, right, bottom);
     }
 }
