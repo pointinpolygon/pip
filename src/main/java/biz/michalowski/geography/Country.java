@@ -1,21 +1,16 @@
 package biz.michalowski.geography;
 
-import biz.michalowski.geometry.Boundary;
+import biz.michalowski.geometry.Point;
+import biz.michalowski.geometry.Polygon;
 
-public class Country implements Boundary {
-
-    interface Border {
-        boolean contains(Coordinate coordinate);
-    }
+public class Country implements Polygon.Polygonable {
 
     private final String name;
-    private final Border border;
-    private final BoundingBox boundingBox;
+    private final Polygon polygon;
 
-    Country(String name, Border border, BoundingBox boundingBox) {
+    public Country(String name, Polygon polygon) {
         this.name = name;
-        this.border = border;
-        this.boundingBox = boundingBox;
+        this.polygon = polygon;
     }
 
     public String getName() {
@@ -23,16 +18,16 @@ public class Country implements Boundary {
     }
 
     @Override
-    public BoundingBox getBoundingBox() {
-        return boundingBox;
-    }
-
-    boolean contains(Coordinate coordinate) {
-        return border.contains(coordinate);
+    public Polygon toPolygon() {
+        return polygon;
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean contains(Coordinate coordinate) {
+        return toPolygon().contains(new Point(coordinate.lon, coordinate.lat));
     }
 }

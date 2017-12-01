@@ -1,7 +1,7 @@
 package biz.michalowski.geography;
 
-import biz.michalowski.geometry.canvas.Canvas;
 import biz.michalowski.geometry.Point;
+import biz.michalowski.geometry.canvas.Canvas;
 
 import java.util.Optional;
 
@@ -17,8 +17,7 @@ public class CountrySearch {
     public Optional<Country> findCountry(Coordinate coordinate) {
         Point point = new Point(coordinate.lon, coordinate.lat);
         return canvas
-                .findPossibleContainers(point)
-                .filter(country -> country.contains(coordinate))
+                .findContaining(point)
                 .findFirst();
     }
 }

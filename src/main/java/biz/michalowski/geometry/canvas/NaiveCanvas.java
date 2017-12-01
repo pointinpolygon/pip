@@ -1,24 +1,24 @@
 package biz.michalowski.geometry.canvas;
 
-import biz.michalowski.geometry.Boundary;
 import biz.michalowski.geometry.Point;
+import biz.michalowski.geometry.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-class NaiveCanvas<T extends Boundary> implements Canvas<T> {
+class NaiveCanvas<T extends Polygon.Polygonable> implements Canvas<T> {
 
-    private List<T> boundaries = new ArrayList<>();
+    private List<T> polygons = new ArrayList<>();
 
     @Override
-    public void init(List<T> boundaries) {
-        this.boundaries = boundaries;
+    public void init(List<T> items) {
+        this.polygons = items;
     }
 
-    public Stream<T> findPossibleContainers(Point point) {
-        return boundaries
+    public Stream<T> findContaining(Point point) {
+        return polygons
                 .stream()
-                .filter(boundary -> boundary.getBoundingBox().contains(point));
+                .filter(item -> item.toPolygon().contains(point));
     }
 }

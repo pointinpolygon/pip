@@ -5,68 +5,96 @@ import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.List;
 
-public class SimpleBoundingBox implements Boundary.BoundingBox {
+public class SimpleBoundingBox implements BoundingBox {
 
-    private final double left;
-    private final double top;
-    private final double right;
-    private final double bottom;
+    private final double minX;
+    private final double maxX;
+    private final double minY;
+    private final double maxY;
 
-    public SimpleBoundingBox(double left, double top, double right, double bottom) {
-        Preconditions.checkArgument(left <= right);
-        Preconditions.checkArgument(top <= bottom);
-        this.left = left;
-        this.top = top;
-        this.right = right;
-        this.bottom = bottom;
+    public SimpleBoundingBox(double minX, double maxX, double minY, double maxY) {
+        Preconditions.checkArgument(minX <= maxX);
+        Preconditions.checkArgument(minY <= maxY);
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
     }
 
     @Override
     public boolean contains(Point point) {
-        return this.left <= point.x && point.x <= this.right
-                && this.top <= point.y && point.y <= this.bottom;
+        return this.minX <= point.x && point.x <= this.maxX
+                && this.minY <= point.y && point.y <= this.maxY;
     }
 
-    @Override
-    public double left() {
-        return left;
-    }
-
-    @Override
-    public double right() {
-        return right;
-    }
-
-    @Override
-    public double top() {
-        return top;
-    }
-
-    @Override
-    public double bottom() {
-        return bottom;
-    }
-
-    public List<SimpleBoundingBox> divide() {
-        double newWidth = (right - left) / 2;
-        double newHeight = (bottom - top) / 2;
+    public List<SimpleBoundingBox> fork() {
+        double newWidth = (maxX - minX) / 2;
+        double newHeight = (maxY - minY) / 2;
         return Arrays.asList(
-                new SimpleBoundingBox(left, top, left + newWidth, top + newHeight),
-                new SimpleBoundingBox(left + newWidth, top, right, top + newHeight),
-                new SimpleBoundingBox(left, top + newHeight, left + newWidth, bottom),
-                new SimpleBoundingBox(left + newWidth, top + newHeight, right, bottom)
+                new SimpleBoundingBox(minX, minX + newWidth, maxY - newHeight, maxY),
+                new SimpleBoundingBox(minX + newWidth, maxX, maxY - newHeight, maxY),
+                new SimpleBoundingBox(minX, minX + newWidth, minY, minY + newHeight),
+                new SimpleBoundingBox(minX + newWidth, maxX, minY, minY + newHeight)
         );
     }
 
-    public boolean containsFully(Boundary.BoundingBox boundingBox) {
-        return left < boundingBox.left()
-                && top < boundingBox.top()
-                && boundingBox.right() < right
-                && boundingBox.bottom() < bottom;
+    boolean intersects(BoundingBox boundingBox) {
+        return minX < boundingBox.maxX()
+                && maxX > boundingBox.minX()
+                && maxY > boundingBox.minY()
+                && minY < boundingBox.maxY();
+    }
+
+    @Override
+    public double minX() {
+        return minX;
+    }
+
+    @Override
+    public double maxX() {
+        return maxX;
+    }
+
+    @Override
+    public double maxY() {
+        return maxY;
+    }
+
+    @Override
+    public double minY() {
+        return minY;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SimpleBoundingBox that = (SimpleBoundingBox) o;
+
+        if (Double.compare(that.minX, minX) != 0) return false;
+        if (Double.compare(that.maxX, maxX) != 0) return false;
+        if (Double.compare(that.minY, minY) != 0) return false;
+        return Double.compare(that.maxY, maxY) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(minX);
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(maxX);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(minY);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(maxY);
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
     }
 
     @Override
     public String toString() {
-        return String.format("%s %s %s %s", left, top, right, bottom);
+        return String.format("%s %s %s %s", minX, maxX, minY, maxY);
     }
 }

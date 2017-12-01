@@ -1,53 +1,57 @@
 package biz.michalowski.geography;
 
-import biz.michalowski.TestValues;
+import biz.michalowski.geography.geotools.GeotoolsCountryRepository;
+import biz.michalowski.geometry.Point;
+import biz.michalowski.geometry.Polygon;
 import biz.michalowski.geometry.canvas.Canvas;
+import biz.michalowski.geometry.TestPolygon;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Collections;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import static biz.michalowski.TestValues.*;
+import static biz.michalowski.TestValues.WROCLAW_COORDINATE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CountrySearchTest {
 
-    private final CountryRepository countryRepository = mock(CountryRepository.class);
-    private final Country.Border polishBorder = mock(Country.Border.class);
-    private final Country poland = new Country("Poland", polishBorder, TestValues.POLAND_BOUNDING_BOX);
+    private final CountryRepository countryRepository = mock(GeotoolsCountryRepository.class);
+    private final Polygon squarelandPolygon = TestPolygon.from(0, 1, 0, 1).toPolygon();
+    private final Country squareland = new Country("Squareland", squarelandPolygon);
 
+    private Canvas<Country> canvas = mock(Canvas.class);
     private CountrySearch countrySearch;
 
     @Before
     public void setUp() throws Exception {
-        when(polishBorder.contains(any(Coordinate.class))).thenReturn(false);
-        when(countryRepository.getAll()).thenReturn(Collections.singletonList(poland));
-        countrySearch = new CountrySearch(countryRepository, Canvas.CanvasFactory.quadtree());
+        when(countryRepository.getAll()).thenReturn(Collections.singletonList(squareland));
+        countrySearch = new CountrySearch(countryRepository, () -> canvas);
     }
 
     @Test
-    public void finds_a_country_by_coordinates_inside() {
-        when(polishBorder.contains(any(Coordinate.class))).thenReturn(true);
+    public void initializes_canvas_in_constructor() {
+        verify(canvas).init(Collections.singletonList(squareland));
+    }
+
+    @Test
+    public void queries_canvas_to_find_a_country() {
+        when(canvas.findContaining(any(Point.class))).thenReturn(Stream.of(squareland));
+
         Optional<Country> country = countrySearch.findCountry(WROCLAW_COORDINATE);
 
-        assertThat(country.get().getName(), is("Poland"));
+        assertThat(country, is(Optional.of(squareland)));
     }
 
     @Test
-    public void no_country_is_found_for_coordinates_outside_the_bounding_box() {
-        Optional<Country> country = countrySearch.findCountry(LA_COORDINATE);
+    public void returns_empty_when_no_country_found() {
+        when(canvas.findContaining(any(Point.class))).thenReturn(Stream.empty());
 
-        assertThat(country, is(Optional.empty()));
-    }
-
-    @Test
-    public void no_country_is_found_for_coordinates_outside_the_country_but_inside_its_bounding_box() {
-        Optional<Country> country = countrySearch.findCountry(LIBEREC_COORDINATE);
+        Optional<Country> country = countrySearch.findCountry(WROCLAW_COORDINATE);
 
         assertThat(country, is(Optional.empty()));
     }
